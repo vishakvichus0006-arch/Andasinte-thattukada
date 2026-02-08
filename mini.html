@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Andasinte Thattukada</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #ff4757;
+            --secondary: #ffa502;
+            --dark: #2f3542;
+            --light: #f1f2f6;
+            --success: #2ed573;
+            --card-bg: #ffffff;
+            --shadow: 0 10px 20px rgba(0,0,0,0.08);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            background-color: var(--light);
+            color: var(--dark);
+            -webkit-tap-highlight-color: transparent;
+            padding-bottom: 120px;
+        }
+
+        /* --- Welcome Screen --- */
+        #welcome-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #ff4757 0%, #ff6b81 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 5000;
+            text-align: center;
+            padding: 30px;
+            transition: opacity 0.4s ease-out;
+        }
+
+        #welcome-screen h1 {
+            font-size: 2.8rem;
+            line-height: 1.2;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .enter-btn {
+            background: white;
+            color: var(--primary);
+            border: none;
+            padding: 16px 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        .enter-btn:active { transform: scale(0.95); }
+
+        #app-interface { display: none; }
+
+        /* --- Header --- */
+        header {
+            background: white;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .brand h1 { margin: 0; font-size: 1.2rem; color: var(--primary); font-weight: 800; }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+
+        h2 {
+            font-size: 1.2rem;
+            color: var(--dark);
+            margin: 30px 0 15px 0;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-left: 5px solid var(--secondary);
+            padding-left: 10px;
+        }
+
+        /* --- GRID SYSTEM --- */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        /* --- CARD DESIGN --- */
+        .menu-item {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0,0,0,0.02);
+            transition: transform 0.2s;
+        }
+
+        .menu-item:active { transform: scale(0.98); }
+
+        /* --- IMAGE STYLING --- */
+        .food-icon {
+            width: 100%;
+            height: 140px;
+            overflow: hidden;
+            border-radius: 15px;
+            margin-bottom: 10px;
+        }
+
+        .food-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-item:hover .food-icon img {
+            transform: scale(1.1);
+        }
+
+        .item-details h3 {
+            margin: 0 0 5px 0;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .price {
+            display: block;
+            color: var(--primary);
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        /* --- Quantity Controls --- */
+        .qty-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f1f2f6;
+            border-radius: 12px;
+            padding: 5px;
+            width: 100%;
+        }
+
+        .qty-btn {
+            background: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            color: var(--dark);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .qty-btn.add { color: white; background: var(--success); }
+        .qty-btn.minus { color: var(--primary); }
+
+        /* --- Bottom Bar --- */
+        .bottom-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 500px;
+            background: #2f3542;
+            padding: 15px 25px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            z-index: 2000;
+        }
+
+        .total-price span { font-size: 1.4rem; font-weight: 700; color: var(--secondary); margin-left: 5px; }
+
+        .pay-btn {
+            background: linear-gradient(45deg, var(--secondary), #ff793f);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* --- Modal Styling --- */
+        #checkoutModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); justify-content: center; align-items: center; z-index: 3000; }
+        .modal-content { background: white; padding: 25px 25px; border-radius: 24px; text-align: center; width: 320px; max-height: 95vh; overflow-y: auto;}
+
+        .close-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: transparent;
+            color: #777;
+            width: 100%;
+            border:none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* Receipt Box */
+        #receipt-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: left;
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px dashed #dcdde1;
+        }
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .receipt-item:last-child { border-bottom: none; margin-bottom: 0; }
+        .item-name { font-weight: 600; color: var(--dark); }
+        .item-subtotal { font-weight: 700; color: var(--primary); }
+
+        /* Form & Payment Options */
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #f1f2f6;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-family: inherit;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        .payment-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .payment-option-label {
+            flex: 1;
+            border: 2px solid #f1f2f6;
+            padding: 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: 0.2s;
+            position: relative;
+        }
+
+        /* Hide actual radio button */
+        .payment-option-label input { position: absolute; opacity: 0; cursor: pointer; }
+
+        /* Selected State */
+        .payment-option-label:has(input:checked) {
+            border-color: var(--primary);
+            background-color: #fff0f1;
+            color: var(--primary);
+        }
+
+        .confirm-btn {
+            background: var(--dark);
+            color: white;
+            border: none;
+            padding: 14px 0;
+            width: 100%;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Back to Home Button */
+        .home-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 0;
+            width: 100%;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+        }
+
+        /* Success & QR Section (Hidden by default) */
+        #success-section { display: none; margin-top: 20px; animation: fadeIn 0.5s; }
+        #qr-container { display: none; margin-top: 15px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (min-width: 600px) {
+            .menu-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="welcome-screen">
+        <div>
+            <div style="font-size: 5rem; margin-bottom: 20px;">🥘</div>
+            <h1>ANDASINTE<br>THATTUKADA</h1>
+            <p>Tasty Food @Nedumkandam</p>
+            <button class="enter-btn" onclick="enterShop()">Order Now</button>
+        </div>
+    </div>
+
+    <div id="app-interface">
+        <header>
+            <div class="brand">
+                <h1>ANDASINTE THATTUKADA</h1>
+            </div>
+            <div style="font-size: 1.5rem;">👨‍🍳</div>
+        </header>
+
+        <div class="container">
+
+            <h2>☀️ Breakfast</h2>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="food-icon">
+                        <img src="dosa.jpg" alt="Dosa">
+                    </div>
+                    <div class="item-details"><h3>Dosa</h3><span class="price">₹10</span></div>
+                    <div class="qty-control">
+                        <button class="qty-btn minus" onclick="updateQty('dosa', -1)">−</button>
+                        <span id="qty-dosa" class="qty-display">0</span>
+                        <button class="qty-btn add" onclick="updateQty('dosa', 1)">+</button>
+                    </div>
+                    <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="food-icon">
+                        <img src="idiyappam.jpg" alt="Dosa">
+                    </div>
+                    <div class="item-details"><h3>idiyappam</h3><span class="price">₹10</span></div>
+                    <div class="qty-control">
+                        <button class="qty-btn minus" onclick="updateQty('idiyappam', -1)">−</button>
+                        <span id="qty-dosa" class="qty-display">0</span>
+                        <button class="qty-btn add" onclick="updateQty('idiyappam', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="menu-item">
+                    <div class="food-icon">
+                        <img src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=500&q=80" alt="Chappathi">
+                    </div>
+                    <div class="item-details"><h3>Chappathi</h3><span class="price">₹15</span></div>
+                    <div class="qty-control">
+                        <button class="qty-btn minus" onclick="updateQty('chappathi', -1)">−</button>
+                        <span id="qty-chappathi" class="qty-display">0</span>
+                        <button class="qty-btn add" onclick="updateQty('chappathi', 1)">+</button>
+                    </div>
+                    <div class="menu-item">
+                    <div class="food-icon">
+                        <img src="porotta.jpg" alt="Chappathi">
+                    </div>
+                    <div class="item-details"><h3>porotta</h3><span class="price">₹15</span></div>
+                    <div class="qty-control">
+                        <button class="qty-btn minus" onclick="updateQty('porotta', -1)">−</button>
+                        <span id="qty-porotta" class="qty-display">0</span>
+                        <button class="qty-btn add" onclick="updateQty('porotta', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="menu-item">
+                    <div class="food-icon">
+                        <img src="Untitled.jpg">
+                    </div>
+                    <div class="item-details"><h3>Idli (2 pcs)</h3><span class="price">₹15</span></div>
+                    <div class="qty-control">
+                        <button class="qty-btn minus" onclick="updateQty('idli', -1)">−</button>
+                        <span id="qty-idli" class="qty-display">0</span>
+                        <button class="qty-btn add" onclick="updateQty('idli', 1)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <h2>🍛 Lunch</h2>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="food-icon">
+                        <img src="meals.jpg" alt="Meals">
+                    </div>
+                    <div class="item-details"><h3>Meals</h3><span class="price">₹80</span></div>
+                    <div class="qty-control">
+                        <button class="qty-btn minus" onclick="updateQty('meals', -1)">−</button>
+                        <span id="qty-meals" class="qty-display">0</span>
+                        <button class="qty-btn add" onclick="updateQty('meals', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="menu-item">
+                    <div class="food-icon">
+                        <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&q=80" alt="Biryani">
+                    </div>
+                    <div class="item-details"><h3>Biryani</h3><span class="price">₹130</span></div>
+                    <div class="qty-control">
+                        <button class="qty-btn minus" onclick="updateQty('biryani', -1)">−</button>
+                        <span id="qty-biryani" class="qty-display">0</span>
+                        <button class="qty-btn add" onclick="updateQty('biryani', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="menu-item">
+                    <div class="food-icon">
+                        <img src="friedrice.jpg" alt="Fried Rice">
+                    </div>
+                    <div class="item-details"><h3>Fried Rice</h3><span class="price">₹130</span></div>
+                    <div class="qty-control">
+                        <button class="qty-btn minus" onclick="updateQty('friedrice', -1)">−</button>
+                        <span id="qty-friedrice" class="qty-display">0</span>
+                        <button class="qty-btn add" onclick="updateQty('friedrice', 1)">+</button>
+                    </div> <br>>
+                </div>
+            </div>
+
+            <h2>🍌 Snacks</h2>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="food-icon">
+                        <img src="pazhampori.jpg" alt="Pazhampori (Banana Fry)">
+                    </div>
+                    <div class="item-details"><h3>Pazhampori</h3><span class="price">₹10</span></div>
+                    <div class="qty-control">
+                        <button class="qty-btn minus" onclick="updateQty('pazhampori', -1)">−</button>
+                        <span id="qty-pazhampori" class="qty-display">0</span>
+                        <button class="qty-btn add" onclick="updateQty('pazhampori', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="menu-item">
+                    <div class="food-icon">
+                        <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?w=500&q=80" alt="Samosa">
+                    </div>
+                    <div class="item-details"><h3>Samosa</h3><span class="price">₹15</span></div>
+                    <div class="qty-control">
+                        <button class="qty-btn minus" onclick="updateQty('samosa', -1)">−</button>
+                        <span id="qty-samosa" class="qty-display">0</span>
+                        <button class="qty-btn add" onclick="updateQty('samosa', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="menu-item">
+                    <div class="food-icon">
+                        <img src="uzhunnuvada.jpg" alt="Vada">
+                    </div>
+                    <div class="item-details"><h3>Uzhunnu Vada</h3><span class="price">₹12</span></div>
+                    <div class="qty-control">
+                        <button class="qty-btn minus" onclick="updateQty('vada', -1)">−</button>
+                        <span id="qty-vada" class="qty-display">0</span>
+                        <button class="qty-btn add" onclick="updateQty('vada', 1)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <h2>☕ Drinks</h2>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="food-icon">
+                        <img src="tea.jpg" alt="Tea">
+                    </div>
+                    <div class="item-details"><h3>Tea</h3><span class="price">₹12</span></div>
+                    <div class="qty-control">
+                        <button class="qty-btn minus" onclick="updateQty('tea', -1)">−</button>
+                        <span id="qty-tea" class="qty-display">0</span>
+                        <button class="qty-btn add" onclick="updateQty('tea', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="menu-item">
+                    <div class="food-icon">
+                        <img src="coffeee.jpg" alt="Coffee">
+                    </div>
+                    <div class="item-details"><h3>Coffee</h3><span class="price">₹10</span></div>
+                    <div class="qty-control">
+                        <button class="qty-btn minus" onclick="updateQty('coffee', -1)">−</button>
+                        <span id="qty-coffee" class="qty-display">0</span>
+                        <button class="qty-btn add" onclick="updateQty('coffee', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="menu-item">
+                    <div class="food-icon">
+                        <img src="https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500&q=80" alt="Coke">
+                    </div>
+                    <div class="item-details"><h3>Coca-Cola</h3><span class="price">₹35</span></div>
+                    <div class="qty-control">
+                        <button class="qty-btn minus" onclick="updateQty('coke', -1)">−</button>
+                        <span id="qty-coke" class="qty-display">0</span>
+                        <button class="qty-btn add" onclick="updateQty('coke', 1)">+</button>
+                    </div>
+                    <div class="menu-item">
+                    <div class="food-icon">
+                        <img src="sodalime.jpg" alt="Coke">
+                    </div>
+                    <div class="item-details"><h3>Soda-Lime</h3><span class="price">₹25</span></div>
+                    <div class="qty-control">
+                        <button class="qty-btn minus" onclick="updateQty('Soda-Lime', -1)">−</button>
+                        <span id="qty-coke" class="qty-display">0</span>
+                        <button class="qty-btn add" onclick="updateQty('Soda-Lime', 1)">+</button>
+                    </div>
+                             <div class="menu-item">
+                    <div class="food-icon">
+                        <img src="mintlime.jpg" alt="Coke">
+                    </div>
+                    <div class="item-details"><h3>mint-lime</h3><span class="price">₹25</span></div>
+                    <div class="qty-control">
+                        <button class="qty-btn minus" onclick="updateQty('mint-lime', -1)">−</button>
+                        <span id="qty-coke" class="qty-display">0</span>
+                        <button class="qty-btn add" onclick="updateQty('mint-lime', 1)">+</button>
+                    </div>
+                          <div class="menu-item">
+                    <div class="food-icon">
+                        <img src="pepsi.jpg" alt="Coke">
+                    </div>
+                    <div class="item-details"><h3>Pepsi</h3><span class="price">₹25</span></div>
+                    <div class="qty-control">
+                        <button class="qty-btn minus" onclick="updateQty('Pepsi', -1)">−</button>
+                        <span id="qty-coke" class="qty-display">0</span>
+                        <button class="qty-btn add" onclick="updateQty('Pepsi', 1)">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-bar">
+            <div class="total-price">Total <span id="grand-total">₹0</span></div>
+            <button class="pay-btn" onclick="openCheckout()">Place Order</button>
+        </div>
+    </div>
+
+    <div id="checkoutModal">
+        <div class="modal-content">
+
+            <div id="order-step">
+                <h2 style="margin:0; color: var(--dark);">Checkout 🛒</h2>
+
+                <div id="receipt-box"></div>
+                <div style="text-align: right; font-weight: 700; margin-bottom: 15px;">
+                    Total: <span id="modal-total" style="color:var(--primary); font-size: 1.2rem;">0</span>
+                </div>
+
+                <form id="orderForm" onsubmit="handleFormSubmit(event)">
+                    <input type="hidden" name="Order_Details" id="hidden-order-details">
+                    <input type="hidden" name="Total_Amount" id="hidden-total-amount">
+
+                    <input type="text" name="Customer_Name" class="form-input" placeholder="Your Name" required>
+                    <input type="tel" name="Phone_Number" class="form-input" placeholder="Mobile Number" required>
+
+                    <p style="text-align: left; margin: 0 0 5px 0; font-weight:600; font-size: 0.9rem;">Payment Method:</p>
+                    <div class="payment-options">
+                        <label class="payment-option-label">
+                            <input type="radio" name="Payment_Method" value="Cash on Delivery" required>
+                            💵 Cash
+                        </label>
+                        <label class="payment-option-label">
+                            <input type="radio" name="Payment_Method" value="UPI Online" required>
+                            📱 UPI / Scan
+                        </label>
+                    </div>
+
+                    <button type="submit" class="confirm-btn" id="submit-btn">Confirm Order ✅</button>
+                </form>
+                <button class="close-btn" onclick="closeModal()">Cancel</button>
+            </div>
+
+            <div id="success-section">
+                <div style="font-size: 4rem;">🎉</div>
+                <h2 style="color: var(--success); margin: 5px 0;">Order Placed!</h2>
+                <p id="success-msg">Your order has been placed.</p>
+
+                <div id="qr-container">
+                    <p style="font-weight: 600; margin-bottom: 5px;">Scan to Pay:</p>
+                    <div id="qr-target" style="width: 180px; height: 180px; background: #eee; margin: 0 auto; border-radius: 10px;"></div>
+                    <p style="font-size:0.8rem; color:gray; margin-top:5px;">To: <span id="payee-name"></span></p>
+                </div>
+
+                <button class="home-btn" onclick="resetApp()">🏠 Back to Home</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const upiID = "8943049070@superyes";
+        const payeeName = "ANDASINTE THATTUKADA";
+        const formspreeURL = "https://formspree.io/f/xjgonngy";
+
+        const itemNames = {
+            dosa: "Dosa",
+            chappathi: "Chappathi",
+            idli: "Idli (2 pcs)",
+            meals: "Meals",
+            biryani: "Biryani",
+            friedrice: "Fried Rice",
+            pazhampori: "Pazhampori",
+            samosa: "Samosa",
+            vada: "Uzhunnu Vada",
+            tea: "Tea",
+            coffee: "Coffee",
+            coke: "Coca-Cola"
+        };
+
+        const prices = {
+            dosa: 10, chappathi: 10, idli: 15,
+            meals: 80, biryani: 130, friedrice: 130,
+            pazhampori: 10, samosa: 15, vada: 12,
+            tea: 12, coffee: 10, coke: 35
+        };
+
+        let cart = {
+            dosa: 0, chappathi: 0, idli: 0,
+            meals: 0, biryani: 0, friedrice: 0,
+            pazhampori: 0, samosa: 0, vada: 0,
+            tea: 0, coffee: 0, coke: 0
+        };
+
+        function enterShop() {
+            const welcome = document.getElementById('welcome-screen');
+            const app = document.getElementById('app-interface');
+            welcome.style.opacity = '0';
+            setTimeout(() => {
+                welcome.style.display = 'none';
+                app.style.display = 'block';
+            }, 400);
+        }
+
+        function updateQty(item, change) {
+            if (cart[item] !== undefined && cart[item] + change >= 0) {
+                cart[item] += change;
+                const qtySpan = document.getElementById('qty-' + item);
+                if(qtySpan) qtySpan.innerText = cart[item];
+                calculateTotal();
+            }
+        }
+
+        function calculateTotal() {
+            let total = 0;
+            for (let item in cart) {
+                total += cart[item] * prices[item];
+            }
+            document.getElementById('grand-total').innerText = "₹" + total;
+            document.getElementById('modal-total').innerText = "₹" + total;
+            return total;
+        }
+
+        function openCheckout() {
+            const total = calculateTotal();
+            if (total === 0) { alert("Please add food first!"); return; }
+
+            // Reset modal state
+            document.getElementById('order-step').style.display = 'block';
+            document.getElementById('success-section').style.display = 'none';
+            document.getElementById('qr-container').style.display = 'none';
+            document.getElementById('submit-btn').disabled = false;
+            document.getElementById('submit-btn').innerText = "Confirm Order ✅";
+
+            // Generate Receipt & Data
+            let receiptHTML = "";
+            let orderString = "";
+
+            for (let item in cart) {
+                if (cart[item] > 0) {
+                    let itemName = itemNames[item];
+                    let itemTotal = cart[item] * prices[item];
+                    receiptHTML += `<div class="receipt-item"><span class="item-name">${itemName} x${cart[item]}</span><span class="item-subtotal">₹${itemTotal}</span></div>`;
+                    orderString += `${itemName} x ${cart[item]} (₹${itemTotal}), `;
+                }
+            }
+            if(orderString.length > 2) orderString = orderString.substring(0, orderString.length - 2);
+
+            document.getElementById('receipt-box').innerHTML = receiptHTML;
+            document.getElementById('hidden-order-details').value = orderString;
+            document.getElementById('hidden-total-amount').value = "₹" + total;
+
+            document.getElementById('checkoutModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('checkoutModal').style.display = 'none';
+        }
+
+        function resetApp() {
+            // 1. Close Modal
+            closeModal();
+
+            // 2. Reset Cart Data & UI Counters
+            for(let item in cart) {
+                cart[item] = 0;
+                let qtySpan = document.getElementById('qty-' + item);
+                if(qtySpan) qtySpan.innerText = '0';
+            }
+
+            // 3. Reset Totals
+            calculateTotal();
+
+            // 4. Reset Form Inputs
+            document.getElementById('orderForm').reset();
+        }
+
+        // AJAX Form Submit
+        function handleFormSubmit(event) {
+            event.preventDefault(); // Stop page reload
+
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+            btn.innerText = "Sending...";
+
+            const form = document.getElementById('orderForm');
+            const data = new FormData(form);
+            const paymentMethod = data.get("Payment_Method");
+
+            fetch(formspreeURL, {
+                method: 'POST',
+                body: data,
+                headers: { 'Accept': 'application/json' }
+            }).then(response => {
+                if (response.ok) {
+                    // Hide Form, Show Success
+                    document.getElementById('order-step').style.display = 'none';
+                    document.getElementById('success-section').style.display = 'block';
+
+                    if(paymentMethod === "UPI Online") {
+                        // Show QR Code Logic
+                        showQRCode(calculateTotal());
+                        document.getElementById('success-msg').innerText = "Order received! Please scan below to pay.";
+                    } else {
+                        // Cash logic
+                        document.getElementById('success-msg').innerText = "Please pay at the counter. Enjoy your food!";
+                    }
+                } else {
+                    alert("Oops! There was a problem sending your order.");
+                    btn.disabled = false;
+                }
+            }).catch(error => {
+                alert("Error sending order. Check internet connection.");
+                btn.disabled = false;
+            });
+        }
+
+        function showQRCode(total) {
+            document.getElementById('qr-container').style.display = 'block';
+            document.getElementById('payee-name').innerText = payeeName;
+
+            const upiLink = `upi://pay?pa=${upiID}&pn=${encodeURIComponent(payeeName)}&am=${total}&cu=INR`;
+            const qrAPI = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiLink)}`;
+
+            document.getElementById('qr-target').innerHTML = `<img src="${qrAPI}" alt="QR" style="width:100%; height:100%; object-fit:contain;">`;
+        }
+    </script>
+</body>
+</html>
